@@ -1,24 +1,24 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
-
+const surveyRoutes = require('./routes/surveyRoutes.');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
-app.use(express.json()); // Allows parsing JSON requests
+app.use(express.json()); // Parse JSON requests
+app.use(cors()); // Allow cross-origin requests
 
-// MongoDB Connection
+// Routes
+app.use('/api', surveyRoutes);
+
 mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => console.log('✅ MongoDB connected'))
+.then(() => {
+    console.log('✅ MongoDB connected successfully');
+    app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+})
 .catch(err => console.error('❌ MongoDB connection error:', err));
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-});
